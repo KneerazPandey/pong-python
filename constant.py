@@ -1,0 +1,10 @@
+import pygame
+
+SCREEN_WIDTH = 1100
+SCREEN_HEIGHT = 580
+FPS = 60
+BG_COLOR = pygame.Color('grey12')
+LIGHT_GREY = (200, 200, 200)
+BALL_SPEED_X = 7
+BALL_SPEED_Y = 7
+PLAYER_SPEED = 7
