@@ -7,13 +7,21 @@ from constant import *
 def ball_animation():
     global BALL_SPEED_X
     global BALL_SPEED_Y
+    global player_score
+    global opponent_score
+    
     ball.x += BALL_SPEED_X
     ball.y += BALL_SPEED_Y
     
     if ball.bottom >= SCREEN_HEIGHT or ball.top <= 0:
         BALL_SPEED_Y *= -1
-    if ball.left >= SCREEN_WIDTH or ball.right <= 0:
+    if ball.left <= 0:
+        player_score += 1
         ball_restart()
+    if ball.right >= SCREEN_WIDTH:
+        opponent_score += 1
+        ball_restart()
+        
     if ball.colliderect(player) or ball.colliderect(opponent):
         BALL_SPEED_X *= -1
 
@@ -59,6 +67,11 @@ opponent = pygame.Rect(20, SCREEN_HEIGHT / 2 - 70, 10, 140)
 player_speed = 0
 opponent_speed = 7
 
+player_score = 0
+opponent_score = 0
+
+game_font = pygame.font.Font('freesansbold.ttf', 28)
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -87,6 +100,11 @@ while True:
     pygame.draw.rect(surface=screen, color=LIGHT_GREY, rect=opponent)
     pygame.draw.ellipse(surface=screen, color=LIGHT_GREY, rect=ball)
     
+    player_text = game_font.render(f'{player_score}', True, LIGHT_GREY)
+    screen.blit(player_text, (570, 290))
+    
+    opponent_text = game_font.render(f'{opponent_score}', True, LIGHT_GREY)
+    screen.blit(opponent_text, (515, 290))
     
     pygame.display.update()
     clock.tick(FPS)
