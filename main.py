@@ -9,6 +9,7 @@ def ball_animation():
     global BALL_SPEED_Y
     global player_score
     global opponent_score
+    global score_time
     
     ball.x += BALL_SPEED_X
     ball.y += BALL_SPEED_Y
@@ -17,10 +18,10 @@ def ball_animation():
         BALL_SPEED_Y *= -1
     if ball.left <= 0:
         player_score += 1
-        ball_restart()
+        score_time = pygame.time.get_ticks()
     if ball.right >= SCREEN_WIDTH:
         opponent_score += 1
-        ball_restart()
+        score_time = pygame.time.get_ticks()
         
     if ball.colliderect(player) or ball.colliderect(opponent):
         BALL_SPEED_X *= -1
@@ -37,10 +38,27 @@ def player_animation():
 def ball_restart():
     global BALL_SPEED_X
     global BALL_SPEED_Y
+    global score_time
     
+    current_time = pygame.time.get_ticks()
     ball.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-    BALL_SPEED_Y *= random.choice((1, -1))
-    BALL_SPEED_X *= random.choice((1, -1))
+    
+    if current_time - score_time < 700:
+        number_three = game_font.render("3", False, LIGHT_GREY)
+        screen.blit(number_three, (SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT / 2 + 30))
+    if 700 < current_time - score_time < 1400:
+        number_two = game_font.render("2", False, LIGHT_GREY)
+        screen.blit(number_two, (SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT / 2 + 30))
+    if 1400 < current_time - score_time < 2100:
+        number_one = game_font.render("1", False, LIGHT_GREY)
+        screen.blit(number_one, (SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT / 2 + 30))
+    
+    if current_time - score_time < 2100:
+        BALL_SPEED_X, BALL_SPEED_Y = 0, 0
+    else:
+        BALL_SPEED_Y = 7 * random.choice((1, -1))
+        BALL_SPEED_X = 7 * random.choice((1, -1))
+        score_time = None
     
         
 def opponent_animation():
@@ -72,6 +90,8 @@ opponent_score = 0
 
 game_font = pygame.font.Font('freesansbold.ttf', 28)
 
+score_time = True
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -99,6 +119,9 @@ while True:
     pygame.draw.rect(surface=screen, color=LIGHT_GREY, rect=player)
     pygame.draw.rect(surface=screen, color=LIGHT_GREY, rect=opponent)
     pygame.draw.ellipse(surface=screen, color=LIGHT_GREY, rect=ball)
+    
+    if score_time:
+        ball_restart()
     
     player_text = game_font.render(f'{player_score}', True, LIGHT_GREY)
     screen.blit(player_text, (570, 290))
